@@ -31,10 +31,16 @@ The system runs on a Linux laptop which is used also for the navigation.
 
 ## Compiling Sensor Code
 
+ 1. Install Arduino IDE.
+ 1. Add ESP8266 boards definitions to your Arduino IDE.
+ 1. Select board ESP8266 > Wemos D1 R1.
+ 1. Install following libraries using Arduino IDE Library Manager:
+   * ESP8266 Influxdb
+   * ADS1115_WE
  1. Create `client/haddockSettings.cpp` based on this template:
     ```
-    #define WIFI_NAME = "your_wifi_network_name"
-    #define WIFI_PASSWORD = "your_wifi_network_password"
+    #define WIFI_NAME "your_wifi_network_name"
+    #define WIFI_PASSWORD "your_wifi_network_password"
 
     #define WAIT_BETWEEN_MEASUREMENTS 3000
 
