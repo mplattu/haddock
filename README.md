@@ -28,3 +28,25 @@ The system runs on a Linux laptop which is used also for the navigation.
    * Initial Bucket Name: `haddock`
    * Click "Continue"
    * Click "Configure Later"
+
+## Compiling Sensor Code
+
+ 1. Create `client/haddockSettings.cpp` based on this template:
+    ```
+    #define WIFI_NAME = "your_wifi_network_name"
+    #define WIFI_PASSWORD = "your_wifi_network_password"
+
+    #define WAIT_BETWEEN_MEASUREMENTS 3000
+
+    // InfluxDB 2 server url, e.g. http://192.168.1.48:8086 (Use: InfluxDB UI -> Lo$
+    #define INFLUXDB_URL "influxdb-url"
+    // InfluxDB 2 server or cloud API authentication token (Use: InfluxDB UI -> Loa$
+    // It is a best practice to create a write-only token for your "haddock" bucket
+    #define INFLUXDB_TOKEN "token"
+    // InfluxDB 2 organization name or id (Use: InfluxDB UI -> Settings -> Profile $
+    #define INFLUXDB_ORG "Haddock"
+    // InfluxDB 2 bucket name (Use: InfluxDB UI -> Load Data -> Buckets)
+    #define INFLUXDB_BUCKET "haddock"
+    // InfluxDB variable name (the measurement data will be written using this vari$
+    #define INFLUXDB_VAR "your_variable_name"
+    ```
