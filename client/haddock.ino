@@ -53,6 +53,8 @@ void setup() {
   }
   Serial.println("connected\n");
 
+  configTzTime(NTP_TIMEZONE, NTP_SERVER);
+
   if (client.validateConnection()) {
     Serial.print("Connected to InfluxDB: ");
     Serial.println(client.getServerUrl());

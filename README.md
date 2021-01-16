@@ -44,6 +44,11 @@ The system runs on a Linux laptop which is used also for the navigation.
 
     #define WAIT_BETWEEN_MEASUREMENTS 3000
 
+    // Your timezone (https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html)
+    #define NTP_TIMEZONE "UTC+2"
+    // Your NTP server URL (this is where you run your server)
+    #define NTP_SERVER "192.168.1.48"
+
     // InfluxDB 2 server url, e.g. http://192.168.1.48:8086 (Use: InfluxDB UI -> Lo$
     #define INFLUXDB_URL "influxdb-url"
     // InfluxDB 2 server or cloud API authentication token (Use: InfluxDB UI -> Loa$
