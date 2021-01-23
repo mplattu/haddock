@@ -11,9 +11,9 @@
 
 class HaddockSensorTemperatureMAX6675
 {
-  int pin_SCLK=14;
-  int pin_CS=13;
-  int pin_S0=12;
+  int pin_SCLK=14;  // D6
+  int pin_CS=13;    // D7
+  int pin_S0=12;    // D8
   
   private:
     MAX6675 _adc;
