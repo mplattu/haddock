@@ -37,6 +37,7 @@ The system runs on a Linux laptop which is used also for the navigation.
  1. Install following libraries using Arduino IDE Library Manager:
    * ESP8266 Influxdb
    * ADS1115_WE
+   * MAX6675 (by Adafruit)
  1. Create `client/haddockSettings.cpp` based on this template:
     ```
     #define WIFI_NAME "your_wifi_network_name"
