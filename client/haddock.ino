@@ -5,7 +5,7 @@
 */
 
 // Comment this to disable WiFi
-#define WIFI
+//#define WIFI
 
 #include "haddockSettings.cpp"
 
@@ -24,10 +24,14 @@ InfluxDBClient client(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKE
 // Resistor values of the voltage divider (R1=82 kOhm, R2=15 kOhm), 0-30V -> 0-4.6V
 //HaddockSensorVoltageADS1115 haddockSensor(82000, 15000);
 
+// For measuring current using ADS1115
+#include "haddockSensorCurrentADS1115.cpp"
+// Shunt resustor value in ohms (e.g. 0.03 = 30 mOhm)
+HaddockSensorCurrentADS1115 haddockSensor(0.001875);
 
 // For measuring temperature using MAX6675
-#include "haddockSensorTemperatureMAX6675.cpp"
-HaddockSensorTemperatureMAX6675 haddockSensor;
+//#include "haddockSensorTemperatureMAX6675.cpp"
+//HaddockSensorTemperatureMAX6675 haddockSensor;
 
 #ifdef WIFI
 ESP8266WiFiMulti WiFiMulti;
