@@ -41,6 +41,8 @@ ESP8266WiFiMulti WiFiMulti;
 String thisSensorMac;
 
 void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
+
   haddockSettings();
 
   influxDbClient.setConnectionParams(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
@@ -67,6 +69,16 @@ void setup() {
   Serial.printf("My ethernet address: %s\n", myMac);
   HaddockSensorSettings sensorSettings = sensors.getSensorSettings(thisSensorMac);
 
+  if (sensorSettings.sensorType == SensorTypeUnknown) {
+    while (1) {
+      Serial.printf("This sensor %s has no configured role\n", myMac);
+      pinMode(LED_BUILTIN, LOW);
+      delay(100);
+      pinMode(LED_BUILTIN, HIGH);
+      delay(100);
+    }
+  }
+
   Serial.printf("My name: %s\n", sensorSettings.sensorName);
   Serial.printf("My type: %d\n", sensorSettings.sensorType);
 
@@ -91,8 +103,6 @@ void setup() {
     Serial.println(influxDbClient.getLastErrorMessage());
   }
 #endif
-
-  pinMode(LED_BUILTIN, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
 
   // Initialise sensor using sensor settings
   sensors.initialise(thisSensorMac);
