@@ -5,39 +5,45 @@
 */
 
 // Comment this to disable WiFi
-//#define WIFI
+#define WIFI
 
-#include "haddockSettings.cpp"
+#include "sensor.h"
 
-#ifdef WIFI
+Sensor sensors;
+char* WIFI_NAME;
+char* WIFI_PASSWORD;
+
+int WAIT_BETWEEN_MEASUREMENTS;
+
+char* NTP_TIMEZONE;
+char* NTP_SERVER;
+
+char* INFLUXDB_URL;
+char* INFLUXDB_TOKEN;
+char* INFLUXDB_ORG;
+char* INFLUXDB_BUCKET;
+char* INFLUXDB_VAR;
+
+#include "haddock.h"
+#include "haddockSettings.h"
+
+// Always include wifi library as we need the mac address of the device to get its settings
 #include <ESP8266WiFiMulti.h>
-#include <InfluxDbClient.h>
-InfluxDBClient client(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
-#endif
-
-// For random values
-//#include "haddockSensorRandom.cpp"
-//HaddockSensorRandom haddockSensor;
-
-// For measuring voltage using ADS1115
-//#include "haddockSensorVoltageADS1115.cpp"
-// Resistor values of the voltage divider (R1=82 kOhm, R2=15 kOhm), 0-30V -> 0-4.6V
-//HaddockSensorVoltageADS1115 haddockSensor(82000, 15000);
-
-// For measuring current using ADS1115
-#include "haddockSensorCurrentADS1115.cpp"
-// Shunt resustor value in ohms (e.g. 0.03 = 30 mOhm)
-HaddockSensorCurrentADS1115 haddockSensor(0.001875);
-
-// For measuring temperature using MAX6675
-//#include "haddockSensorTemperatureMAX6675.cpp"
-//HaddockSensorTemperatureMAX6675 haddockSensor;
 
 #ifdef WIFI
+#include <InfluxDbClient.h>
+InfluxDBClient influxDbClient;
 ESP8266WiFiMulti WiFiMulti;
 #endif
 
+// We read the WiFi MAC (Ethernet) address to this global variable
+// It will be used as a key to the settings (see haddockSettings.cpp)
+String thisSensorMac;
+
 void setup() {
+  haddockSettings();
+
+  influxDbClient.setConnectionParams(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
 
   Serial.begin(115200);
   // Serial.setDebugOutput(true);
@@ -52,6 +58,18 @@ void setup() {
     delay(1000);
   }
 
+  // Find configuration for this particular device
+  thisSensorMac = WiFi.macAddress();
+
+  char myMac[thisSensorMac.length()+1];
+  thisSensorMac.toCharArray(myMac, thisSensorMac.length()+1);
+  
+  Serial.printf("My ethernet address: %s\n", myMac);
+  HaddockSensorSettings sensorSettings = sensors.getSensorSettings(thisSensorMac);
+
+  Serial.printf("My name: %s\n", sensorSettings.sensorName);
+  Serial.printf("My type: %d\n", sensorSettings.sensorType);
+
 #ifdef WIFI
   WiFi.mode(WIFI_STA);
   WiFiMulti.addAP(WIFI_NAME, WIFI_PASSWORD);
@@ -60,22 +78,26 @@ void setup() {
     Serial.print(".");
     delay(500);
   }
-  Serial.println("connected\n");
+  Serial.print("connected, IP: ");
+  Serial.println(WiFi.localIP());
 
   configTzTime(NTP_TIMEZONE, NTP_SERVER);
 
-  if (client.validateConnection()) {
+  if (influxDbClient.validateConnection()) {
     Serial.print("Connected to InfluxDB: ");
-    Serial.println(client.getServerUrl());
+    Serial.println(influxDbClient.getServerUrl());
   } else {
     Serial.print("InfluxDB connection failed: ");
-    Serial.println(client.getLastErrorMessage());
+    Serial.println(influxDbClient.getLastErrorMessage());
   }
 #endif
 
   pinMode(LED_BUILTIN, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
 
-  haddockSensor.initialise();
+  // Initialise sensor using sensor settings
+  sensors.initialise(thisSensorMac);
+
+  Serial.println("---Setup finished");
 }
 
 void loop() {
@@ -89,18 +111,22 @@ void loop() {
 
     digitalWrite(LED_BUILTIN, LOW);
 
-    // Measure value
-    Serial.print("Starting to measure...\n");
-    float measurement = haddockSensor.measure();
-    Serial.printf("Measured value: %f\n", measurement);
+    // Get InfluxDB sensor & variable name for this sensor
+    char* sensorName = sensors.getSensorName(thisSensorMac);
+    char* variableName = sensors.getSensorVariableName(thisSensorMac);
 
+    // Measure value
+    float measurement = sensors.measure(thisSensorMac);
+
+    Serial.printf("%s: %f\n", variableName, measurement);
+    
 #ifdef WIFI
     // Report measured value to InfluxDB
-    Point pointDevice("measurement");
-    pointDevice.addField(INFLUXDB_VAR, measurement);
-    if (! client.writePoint(pointDevice)) {
+    Point pointDevice(sensorName);
+    pointDevice.addField(variableName, measurement);
+    if (! influxDbClient.writePoint(pointDevice)) {
       Serial.print("InfluxDB write failed: ");
-      Serial.println(client.getLastErrorMessage());
+      Serial.println(influxDbClient.getLastErrorMessage());
     }
 #endif
 

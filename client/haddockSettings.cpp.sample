@@ -1,0 +1,70 @@
+/**
+   Haddock Sensor Data Sender - Settings file
+   https://github.com/mplattu/haddock
+   (C) Matti Lattu 2021
+*/
+
+#ifndef HADDOCK_SETTINGS
+#define HADDOCK_SETTINGS
+
+#include "haddock.h"
+#include "sensor.h"
+
+extern Sensor sensors;
+
+void haddockSettings() {
+  // WiFi credentials
+  WIFI_NAME = "your_wifi_network_name";
+  WIFI_PASSWORD = "your_wifi_network_password";
+
+  // Milliseconds to wait between measurement & data write
+  WAIT_BETWEEN_MEASUREMENTS = 1000;
+
+  // Your timezone (https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html)
+  NTP_TIMEZONE = "UTC+2";
+  // Your NTP server IP (this is probably the same server as your InfluxDB)
+  NTP_SERVER = "192.168.2.23";
+
+  // InfluxDB 2 server url, e.g. http://192.168.1.48:8086
+  INFLUXDB_URL = "http://192.168.2.23:8086";
+  // InfluxDB 2 server or cloud API authentication token
+  //   1. Generate token: InfluxDB UI > Load Data > Tokens > Generate > Read/Write Token
+  //   2. Description: Haddock sensors
+  //   3. Buckets: select "haddock" from the right table ("Write")
+  //   4. Save
+  //   5. Click "Haddock sensors" to copy the token and paste it here:
+  INFLUXDB_TOKEN = "[past your sensor token here]";
+  // InfluxDB 2 organization name or id ("Haddock")
+  INFLUXDB_ORG = "Haddock";
+  // InfluxDB 2 bucket name ("haddock")
+  INFLUXDB_BUCKET = "haddock";
+
+  // Define your sensors. When booting up the devices read their role from this data.
+  // Fields:
+  // - The Mac/Ethernet address identifies the device
+  // - Sensor name which is the first level filter in your bucket (e.g. "Voltage_Battery_A")
+  // - Sensor type, one of the following:
+  //   SensorTypeRandom, SensorTypeVoltage, SensorTypeCurrent, SensorTypeTemperature
+  // - Variable name which is the second level filter in your bucket (e.g. "voltage")
+  // - parameter1 (required by voltage and current sensors)
+  // - parameter2 (required by voltage sensor)
+
+  sensors.addSensor("84:CC:A8:A2:EF:AA", "Refridgerator", SensorTypeRandom, "random_sample");
+
+  // Random sensor
+  // This is useful for testing as no real sensors are needed
+  sensor.addSensor("00:00:00:00:00:01", "RandomSample", SensorTypeRandom, "random_name")
+
+  // Voltage sample (using ADS1115 and voltage divider)
+  // Resistor values of the voltage divider (R1=82 kOhm, R2=15 kOhm), 0-30V -> 0-4.6V
+  sensors.addSensor("01:01:01:01:01:01", "VoltageSample", SensorTypeVoltage, "voltage_sample", 82000, 15000);
+
+  // Current sample (using ADS1115 and shunt resistor)
+  // Calibration value, in theory 1.0 for 100mV shunt, 1.33 for 75mV and 2.0 for 50mV
+  sensors.addSensor("02:02:02:02:02:02", "CurrentSample", SensorTypeCurrent, "current_sample", 0.54);
+
+  // Temperature sample (using MAX6675)
+  sensors.addSensor("03:03:03:03:03:03", "TemperatureSample", SensorTypeTemperature, "temperature_sample");
+}
+
+#endif

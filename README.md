@@ -37,28 +37,10 @@ The system runs on a Linux laptop which is used also for the navigation.
  1. Install following libraries using Arduino IDE Library Manager:
    * ESP8266 Influxdb
    * ADS1115_WE
+   * Adafruit_ADS1015 (by Adafruit)
    * MAX6675 (by Adafruit)
- 1. Create `client/haddockSettings.cpp` based on this template:
-    ```
-    #define WIFI_NAME "your_wifi_network_name"
-    #define WIFI_PASSWORD "your_wifi_network_password"
-
-    #define WAIT_BETWEEN_MEASUREMENTS 3000
-
-    // Your timezone (https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html)
-    #define NTP_TIMEZONE "UTC+2"
-    // Your NTP server URL (this is where you run your server)
-    #define NTP_SERVER "192.168.1.48"
-
-    // InfluxDB 2 server url, e.g. http://192.168.1.48:8086 (Use: InfluxDB UI -> Lo$
-    #define INFLUXDB_URL "influxdb-url"
-    // InfluxDB 2 server or cloud API authentication token (Use: InfluxDB UI -> Loa$
-    // It is a best practice to create a write-only token for your "haddock" bucket
-    #define INFLUXDB_TOKEN "token"
-    // InfluxDB 2 organization name or id (Use: InfluxDB UI -> Settings -> Profile $
-    #define INFLUXDB_ORG "Haddock"
-    // InfluxDB 2 bucket name (Use: InfluxDB UI -> Load Data -> Buckets)
-    #define INFLUXDB_BUCKET "haddock"
-    // InfluxDB variable name (the measurement data will be written using this vari$
-    #define INFLUXDB_VAR "your_variable_name"
-    ```
+ 1. Create `client/haddockSettings.cpp` based on `client/haddockSettings.cpp.sample`
+ 1. Open the client directory in the Arduino IDE and upload it to your Wemos D1 board.
+ 1. Follow the serial output to see the Mac address of the board.
+ 1. Add the sensor definition for this particular board.
+ 1. Repeat the sensor confiruration step for each board.
