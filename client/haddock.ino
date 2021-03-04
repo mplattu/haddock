@@ -84,9 +84,9 @@ void setup() {
 
 #ifdef WIFI
   WiFi.mode(WIFI_STA);
-  WiFiMulti.addAP(WIFI_NAME, WIFI_PASSWORD);
-  Serial.print("Connecting to wifi: ");
-  while (WiFiMulti.run() != WL_CONNECTED) {
+  Serial.printf("Connecting to %s: ", WIFI_NAME);
+  WiFi.begin(WIFI_NAME, WIFI_PASSWORD);
+  while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
     delay(500);
   }
@@ -114,7 +114,7 @@ void loop() {
 
 #ifdef WIFI
   // wait for WiFi connection
-  if ((WiFiMulti.run() == WL_CONNECTED)) {
+  if ((WiFi.status() == WL_CONNECTED)) {
 #else
   if (1) {
 #endif
