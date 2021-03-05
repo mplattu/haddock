@@ -15,6 +15,9 @@ extern int WAIT_BETWEEN_MEASUREMENTS;
 extern char* NTP_TIMEZONE;
 extern char* NTP_SERVER;
 
+extern char* OTA_SERVER;
+extern int OTA_VERSION;
+
 extern char* INFLUXDB_URL;
 extern char* INFLUXDB_TOKEN;
 extern char* INFLUXDB_ORG;

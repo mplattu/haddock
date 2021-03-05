@@ -15,7 +15,12 @@ The system runs on a Linux laptop which is used also for the navigation.
 ## Setup (InfluxDB)
 
  1. Install Docker (e.g. in Debian/Ubuntu `sudo apt install docker.io`).
- 1. Start NTP and InfluxDB servers
+ 1. Create the Docker containers for NTP, InfluxDB and nginx
+    ```
+    cd server
+    make create
+    ```
+ 1. Start NTP, InfluxDB and nginx servers
     ```
     cd server
     make start
@@ -44,3 +49,30 @@ The system runs on a Linux laptop which is used also for the navigation.
  1. Follow the serial output to see the Mac address of the board.
  1. Add the sensor definition for this particular board.
  1. Repeat the sensor confiruration step for each board.
+
+## Updating code OTA using nginx
+
+The OTA setting is very straightforward. The main loop of the sensor tries to retrieve
+new binary from the nginx server. If the file is found it is treated as a new binary
+and installed to the ESP8266 sensor.
+
+To update client code:
+ 1. Increase the `OTA_VERSION` value (defined in `haddockSettings.cpp`) by one.
+    This will be the version code of your new updated binary.
+ 1. Compile a new binary with the Arduino IDE: Sketch > Export compiled Binary.
+ 1. Copy binary to `server/ota-files/haddock-XXX.bin` where the XXX is your new version
+    number. For example:
+
+    `cp client/haddock.ino.d1.bin server/ota-files/haddock-2.bin`
+
+ 1. To start the upgrade of all sensors you need to copy the content of
+    `ota-files/` to nginx container:
+    ```
+    cd server
+    make update-ota
+    ```
+
+Make sure you update the `OTA_VERSION` always by one as the Haddock sensor expects
+to find the next update from the version code from a following URL:
+`http://[OTA_SERVER]:80/ota-files/haddock-[OTA_VERSION+1].bin`. It is a good practice
+to keep all your upgraded binaries to give outdated sensors a full upgrade path.

@@ -1,2 +1,6 @@
+# Your local settings
 client/haddockSettings.cpp
 
+# Your local binaries
+server/ota-files/haddock-*.bin
+client/haddock.ino.*.bin

@@ -18,6 +18,9 @@ int WAIT_BETWEEN_MEASUREMENTS;
 char* NTP_TIMEZONE;
 char* NTP_SERVER;
 
+char* OTA_SERVER;
+int OTA_VERSION;
+
 char* INFLUXDB_URL;
 char* INFLUXDB_TOKEN;
 char* INFLUXDB_ORG;
@@ -34,6 +37,9 @@ char* INFLUXDB_VAR;
 #include <InfluxDbClient.h>
 InfluxDBClient influxDbClient;
 ESP8266WiFiMulti WiFiMulti;
+
+// For HTTP OTA updates
+#include <ESP8266httpUpdate.h>
 #endif
 
 // We read the WiFi MAC (Ethernet) address to this global variable
@@ -110,6 +116,12 @@ void setup() {
   Serial.println("---Setup finished");
 }
 
+char* getOTAPath(int nextVersion) {
+  static char path[128] = {'\0'};
+  snprintf(path, sizeof(path), "/ota-files/haddock-%d.bin", nextVersion);
+  return path;
+}
+
 void loop() {
 
 #ifdef WIFI
@@ -134,10 +146,15 @@ void loop() {
     // Report measured value to InfluxDB
     Point pointDevice(sensorName);
     pointDevice.addField(variableName, measurement);
+    pointDevice.addField("version", OTA_VERSION);
     if (! influxDbClient.writePoint(pointDevice)) {
       Serial.print("InfluxDB write failed: ");
       Serial.println(influxDbClient.getLastErrorMessage());
     }
+
+    // Do we have an OTA update?
+    char* otaPath = getOTAPath(OTA_VERSION+1);
+    ESPhttpUpdate.update(OTA_SERVER, 80, otaPath);
 #endif
 
     digitalWrite(LED_BUILTIN, HIGH);
