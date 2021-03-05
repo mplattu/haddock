@@ -33,6 +33,11 @@ The system runs on a Linux laptop which is used also for the navigation.
    * Initial Bucket Name: `haddock`
    * Click "Continue"
    * Click "Configure Later"
+ 1. Add a token for your sensors:
+   * "Data" (left navi) > "Tokens" (tab) > "Generate" (button) > "Read/Write Token"
+   * Give a description (e.g. "sensors") and create a scoped write token for bucket "haddock" > "Save"
+   * Click the token description and copy the token string to your `haddockSettings.cpp` for the
+     `INFLUXDB_TOKEN` value.
 
 ## Compiling Sensor Code
 
