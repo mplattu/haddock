@@ -4,7 +4,9 @@
 const int SensorTypeUnknown = 0;
 const int SensorTypeCurrent = 1;
 const int SensorTypeVoltage = 2;
-const int SensorTypeTemperature = 3;
+const int SensorTypeVoltageMulti = 3;
+const int SensorTypeTemperature = 4;
+
 const int SensorTypeRandom = 99;
 
 extern char* WIFI_NAME;

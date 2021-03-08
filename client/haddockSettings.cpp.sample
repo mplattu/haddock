@@ -64,6 +64,10 @@ void haddockSettings() {
   // Resistor values of the voltage divider (R1=82 kOhm, R2=15 kOhm), 0-30V -> 0-4.6V
   sensors.addSensor("01:01:01:01:01:01", "VoltageSample", SensorTypeVoltage, "voltage_sample", 82000, 15000);
 
+  // Voltage sample (using all four ADS1115 and voltage divider)
+  // Resistor values of the voltage divider (R1=82 kOhm, R2=15 kOhm), 0-30V -> 0-4.6V
+  sensors.addSensor("01:01:01:02:02:02", "Voltage_0,Voltage_1,Voltage_2,Voltage_3", SensorTypeVoltageMulti, "voltage_sample", 82000, 15000);
+
   // Current sample (using ADS1115 and shunt resistor)
   // Calibration value, in theory 1.0 for 100mV shunt, 1.33 for 75mV and 2.0 for 50mV
   sensors.addSensor("02:02:02:02:02:02", "CurrentSample", SensorTypeCurrent, "current_sample", 0.54);

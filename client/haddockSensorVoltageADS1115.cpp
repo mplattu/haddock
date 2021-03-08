@@ -41,7 +41,7 @@ float HaddockSensorVoltageADS1115::measure() {
   float measuredVoltage = 0.0;
   measuredVoltage = _adc.getResult_V();
   
-  Serial.printf("HaddockSensorVoltageADS1115Measured voltage: %f\n", measuredVoltage);
+  Serial.printf("HaddockSensorVoltageADS1115 Measured voltage: %f\n", measuredVoltage);
 
   return measuredVoltage / _divider;
 }

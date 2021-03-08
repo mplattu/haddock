@@ -49,10 +49,6 @@ String thisSensorMac;
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
 
-  haddockSettings();
-
-  influxDbClient.setConnectionParams(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
-
   Serial.begin(115200);
   // Serial.setDebugOutput(true);
 
@@ -66,12 +62,16 @@ void setup() {
     delay(1000);
   }
 
+  haddockSettings();
+
+  influxDbClient.setConnectionParams(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
+
   // Find configuration for this particular device
   thisSensorMac = WiFi.macAddress();
 
   char myMac[thisSensorMac.length()+1];
   thisSensorMac.toCharArray(myMac, thisSensorMac.length()+1);
-  
+
   Serial.printf("My ethernet address: %s\n", myMac);
   HaddockSensorSettings sensorSettings = sensors.getSensorSettings(thisSensorMac);
 
@@ -140,8 +140,8 @@ void loop() {
     // Measure value
     float measurement = sensors.measure(thisSensorMac);
 
-    Serial.printf("%s: %f\n", variableName, measurement);
-    
+    Serial.printf("%s: %s = %f\n", sensorName, variableName, measurement);
+
 #ifdef WIFI
     // Report measured value to InfluxDB
     Point pointDevice(sensorName);
@@ -158,6 +158,8 @@ void loop() {
 #endif
 
     digitalWrite(LED_BUILTIN, HIGH);
+
+    sensors.afterMeasure(thisSensorMac);
   }
 
   delay(WAIT_BETWEEN_MEASUREMENTS);
