@@ -42,13 +42,15 @@ The system runs on a Linux laptop which is used also for the navigation.
 ## Compiling Sensor Code
 
  1. Install Arduino IDE.
- 1. Add ESP8266 boards definitions to your Arduino IDE.
- 1. Select board ESP8266 > Wemos D1 R1.
- 1. Install following libraries using Arduino IDE Library Manager:
-   * ESP8266 Influxdb
-   * ADS1115_WE
-   * Adafruit_ADS1015 (by Adafruit)
-   * MAX6675 (by Adafruit)
+ 1. Add ESP8266 boards definitions to your Arduino IDE
+   * File > Preferences > Additional Boards Manager URLs: `http://arduino.esp8266.com/stable/package_esp8266com_index.json`
+   * Tools > Board > Boards Manager > Install "esp8266" by "ESP8266 Community" version 2.7.4
+ 1. Select board ESP8266 () > Wemos D1 R1.
+ 1. Install following libraries using Arduino IDE Library Manager (Tools > Manage Libraries):
+   * ESP8266 Influxdb (3.7.0)
+   * ADS1115_WE (1.2.3)
+   * Adafruit_ADS1015 (by Adafruit, 1.1.2)
+   * MAX6675 (by Adafruit, 1.1.0)
  1. Create `client/haddockSettings.cpp` based on `client/haddockSettings.cpp.sample`
  1. Open the client directory in the Arduino IDE and upload it to your Wemos D1 board.
  1. Follow the serial output to see the Mac address of the board.
