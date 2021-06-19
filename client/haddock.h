@@ -6,6 +6,7 @@ const int SensorTypeCurrent = 1;
 const int SensorTypeVoltage = 2;
 const int SensorTypeVoltageMulti = 3;
 const int SensorTypeTemperature = 4;
+const int SensorTypeTankLevel = 5;
 
 const int SensorTypeRandom = 99;
 

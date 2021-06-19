@@ -116,6 +116,9 @@ void Sensor::initialise(String macAddrStr) {
     case SensorTypeRandom:
       _sensorRandom.initialise();
       return;
+    case SensorTypeTankLevel:
+      _sensorTankLevel.initialise(sensorSettings.parameter1, sensorSettings.parameter2);
+      return;
   }
 
   Serial.printf("There is no initialisation rule for sensor type %d", sensorSettings.sensorType);
@@ -138,9 +141,11 @@ float Sensor::measure(String macAddrStr) {
       return _sensorTemperature.measure();
     case SensorTypeRandom:
       return _sensorRandom.measure();
+    case SensorTypeTankLevel:
+      return _sensorTankLevel.measure();
   }
 
-  Serial.printf("There is no measurement rule for sensor type %d", sensorSettings.sensorType);
+  Serial.printf("There is no measurement rule for sensor type %d\n", sensorSettings.sensorType);
   return 0.0;
 }
 

@@ -33,11 +33,11 @@ char* INFLUXDB_VAR;
 // Always include wifi library as we need the mac address of the device to get its settings
 #include <ESP8266WiFiMulti.h>
 
-#ifdef WIFI
 #include <InfluxDbClient.h>
 InfluxDBClient influxDbClient;
 ESP8266WiFiMulti WiFiMulti;
 
+#ifdef WIFI
 // For HTTP OTA updates
 #include <ESP8266httpUpdate.h>
 #endif
@@ -64,7 +64,9 @@ void setup() {
 
   haddockSettings();
 
+#ifdef WIFI
   influxDbClient.setConnectionParams(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
+#endif
 
   // Find configuration for this particular device
   thisSensorMac = WiFi.macAddress();

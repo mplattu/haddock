@@ -74,6 +74,10 @@ void haddockSettings() {
 
   // Temperature sample (using MAX6675)
   sensors.addSensor("03:03:03:03:03:03", "TemperatureSample", SensorTypeTemperature, "temperature_sample");
+
+  // Tank Level sample
+  // For a standard 0-180 ohm gauge use following magic parameters
+  sensors.addSensor("04:04:04:04:04:04", "TankLevelSample", SensorTypeTankLevel, "tank_level_sample", 327, 1020);
 }
 
 #endif
