@@ -18,9 +18,11 @@ The system runs on a Linux laptop which is used also for the navigation.
  1. Create the Docker containers for NTP, InfluxDB and nginx
     ```
     cd server
-    make create
+    sudo make create-prod
     ```
- 1. Start NTP, InfluxDB and nginx servers
+    If you're creating containers for development, say `make create-dev` in order not to start
+    the containers automatically.
+ 1. In case you did `create-dev` start NTP, InfluxDB and nginx servers
     ```
     cd server
     make start
