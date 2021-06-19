@@ -8,6 +8,7 @@
 #include "haddockSensorVoltageMultiADS1115.h"
 #include "haddockSensorCurrentADS1115.h"
 #include "haddockSensorTemperatureMAX6675.h"
+#include "haddockSensorTankLevel.h"
 
 typedef struct {
   char* macAddr;
@@ -30,6 +31,7 @@ class Sensor
     HaddockSensorVoltageMultiADS1115 _sensorVoltageMulti;
     HaddockSensorCurrentADS1115 _sensorCurrent;
     HaddockSensorTemperatureMAX6675 _sensorTemperature;
+    HaddockSensorTankLevel _sensorTankLevel;
 
     char** splitSensorNames(char* sensorName);
   public:
