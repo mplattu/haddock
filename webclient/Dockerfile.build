@@ -1,0 +1,9 @@
+FROM ubuntu:focal
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get -y install wget curl golang-1.13 make git
+ENV PATH="/usr/lib/go-1.13/bin/:/root/go/bin:${PATH}"
+COPY Makefile /app/
+RUN cd /app && make bin/golangci-lint bin/go2xunit
+COPY src /app/src
+ENV GOPATH=/app
+RUN cd /app && make test checkstyle linux
