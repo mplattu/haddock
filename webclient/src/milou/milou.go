@@ -3,6 +3,7 @@ package main
 import (
   "context"
   "fmt"
+  "net"
   "strings"
 
   "github.com/influxdata/influxdb-client-go/v2"
@@ -10,7 +11,7 @@ import (
 
 const INFLUXDB_ORG = "Haddock"
 const INFLUXDB_BUCKET = "haddock"
-const INFLUXDB_TOKEN = "qVz53e-uVXaIC-_ME1YNr9iDSynYgApRQNrRQdYiP4kK2DPF55h5KgeuVusyMB1pt8j9IeENxTuhcJ-e-N21sw=="
+const INFLUXDB_TOKEN = "joUlJ9vmLXppW0zlMz6hL5u4yUP1qtRcoQJZJUVw7SCnT0XNokrOKIqG-4eOIpaZvpJB7IjXzjpa-dr6G9JSAA=="
 
 type Sensor struct {
   SensorName string
@@ -42,7 +43,13 @@ func getLatestValues(sensorNames []Sensor) []Sensor {
   sensors := []Sensor{}
 
   // Create a new client using an InfluxDB server base URL and an authentication token
-  client := influxdb2.NewClient("http://localhost:8086", INFLUXDB_TOKEN)
+  influxDbUrl := "http://haddock_influxdb:8086"
+  _, err := net.LookupHost("haddock_influxdb")
+  if err != nil {
+    influxDbUrl = "http://localhost:8086"
+  }
+  client := influxdb2.NewClient(influxDbUrl, INFLUXDB_TOKEN)
+
   // Get query client
   queryAPI := client.QueryAPI(INFLUXDB_ORG)
   // get QueryTableResult
