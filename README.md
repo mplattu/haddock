@@ -59,10 +59,10 @@ The system runs on a Linux laptop which is used also for the navigation.
  1. Add the sensor definition for this particular board.
  1. Repeat the sensor confiruration step for each board.
 
-## Updating code OTA using nginx
+## Updating code OTA using httpd
 
 The OTA setting is very straightforward. The main loop of the sensor tries to retrieve
-new binary from the nginx server. If the file is found it is treated as a new binary
+new binary from the httpd server. If the file is found it is treated as a new binary
 and installed to the ESP8266 sensor.
 
 To update client code:
@@ -75,7 +75,7 @@ To update client code:
     `cp client/haddock.ino.d1.bin server/ota-files/haddock-2.bin`
 
  1. To start the upgrade of all sensors you need to copy the content of
-    `ota-files/` to nginx container:
+    `ota-files/` to httpd container:
     ```
     cd server
     make update-ota
