@@ -85,3 +85,9 @@ Make sure you update the `OTA_VERSION` always by one as the Haddock sensor expec
 to find the next update from the version code from a following URL:
 `http://[OTA_SERVER]:80/ota-files/haddock-[OTA_VERSION+1].bin`. It is a good practice
 to keep all your upgraded binaries to give outdated sensors a full upgrade path.
+
+## Milou - A Simple Web Client
+
+Milou is a super-simple web client which shows selected values in a simple text
+format. It is basically a CGI script which retrieves hard-coded variables from
+the InfluxDB. For more information see `webclient/README.md`.
