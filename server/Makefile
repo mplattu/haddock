@@ -51,7 +51,7 @@ clean: clean-ntp clean-influxdb clean-httpd clean-network
 
 update-milou:
 	docker exec haddock_httpd rm -f /var/www/html/milou.cgi
-	docker cp ../webclient/bin/milou haddock_httpd:/var/www/html/milou.cgi
+	docker cp ../webclient/bin/milou haddock_httpd:/var/www/html/index.cgi
 
 update-ota:
 	docker exec haddock_httpd rm -fR /var/www/html/ota-files/
