@@ -1,0 +1,10 @@
+FROM debian:buster
+
+RUN apt-get update \
+  && apt-get -y install lighttpd
+
+COPY 10-haddock.conf /etc/lighttpd/conf-available/
+RUN ln -s /etc/lighttpd/conf-available/10-haddock.conf /etc/lighttpd/conf-enabled/
+RUN rm -f /etc/lighttpd/conf-enabled/99-unconfigured.conf
+
+CMD ["lighttpd", "-D", "-f", "/etc/lighttpd/lighttpd.conf"]
