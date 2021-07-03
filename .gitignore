@@ -1,7 +1,9 @@
 # Your local settings
 client/haddockSettings.cpp
+settings.mk
 
 # Your local binaries
 server/ota-files/haddock-*.bin
+server/99-haddock-params.conf
 client/haddock.ino.*.bin
 webclient/bin/

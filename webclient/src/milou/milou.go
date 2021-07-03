@@ -2,20 +2,17 @@ package main
 
 import (
   "fmt"
-  
+  "os"
+  "strings"
+
   "milou/valuereader"
 )
 
-const INFLUXDB_URL = "http://localhost:8086"
-const INFLUXDB_ORG = "Haddock"
-const INFLUXDB_BUCKET = "haddock"
-const INFLUXDB_TOKEN = "joUlJ9vmLXppW0zlMz6hL5u4yUP1qtRcoQJZJUVw7SCnT0XNokrOKIqG-4eOIpaZvpJB7IjXzjpa-dr6G9JSAA=="
-
 var INFLUXDB_PARAMS = valuereader.InfluxdbParams{
-  INFLUXDB_URL,
-  INFLUXDB_ORG,
-  INFLUXDB_BUCKET,
-  INFLUXDB_TOKEN,
+  os.Getenv("INFLUXDB_URL"),
+  os.Getenv("INFLUXDB_ORG"),
+  os.Getenv("INFLUXDB_BUCKET"),
+  os.Getenv("INFLUXDB_TOKEN_READ"),
 }
 
 var SENSORS = []valuereader.Sensor{
@@ -23,17 +20,25 @@ var SENSORS = []valuereader.Sensor{
   {"Sensor2", "sensor2_valuename", ""},
 }
 
-func main() {
-  fmt.Print("Content-type: text/html\n\n")
-  fmt.Println("<html><body>")
+func getValueTableHTML() string {
+  var lines []string
+
+  lines = append(lines, "Content-Type: text/html; charset=UTF-8\n")
+  lines = append(lines, "<html><body>")
 
   sensorValues := valuereader.GetLatestValues(INFLUXDB_PARAMS, SENSORS)
 
-  fmt.Println("<table>")
+  lines = append(lines, "<table>")
   for _, sensor := range sensorValues {
-    fmt.Printf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n", sensor.SensorName, sensor.SensorValueName, sensor.SensorValue)
+    lines = append(lines, fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n", sensor.SensorName, sensor.SensorValueName, sensor.SensorValue))
   }
-  fmt.Println("</table>")
+  lines = append(lines, "</table>")
 
-  fmt.Println("</body></html>")
+  lines = append(lines, "</body></html>")
+
+  return strings.Join(lines, "\n")
+}
+
+func main() {
+  fmt.Println(getValueTableHTML())
 }
