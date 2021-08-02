@@ -155,8 +155,9 @@ void loop() {
     }
 
     // Do we have an OTA update?
+    WiFiClient client;
     char* otaPath = getOTAPath(OTA_VERSION+1);
-    ESPhttpUpdate.update(OTA_SERVER, 80, otaPath);
+    ESPhttpUpdate.update(client, OTA_SERVER, 80, otaPath);
 #endif
 
     digitalWrite(LED_BUILTIN, HIGH);

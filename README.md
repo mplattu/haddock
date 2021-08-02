@@ -39,25 +39,19 @@ The system runs on a Linux laptop which is used also for the navigation.
    * "Data" (left navi) > "Tokens" (tab) > "Generate" (button) > "Read/Write Token"
    * Give a description (e.g. "sensors") and create a scoped write token for bucket "haddock" > "Save"
    * Click the token description and copy the token string to your `haddockSettings.cpp` for the
-     `INFLUXDB_TOKEN` value.
+     `INFLUXDB_TOKEN` value (see below).
 
 ## Compiling Sensor Code
 
- 1. Install Arduino IDE.
- 1. Add ESP8266 boards definitions to your Arduino IDE
-   * File > Preferences > Additional Boards Manager URLs: `http://arduino.esp8266.com/stable/package_esp8266com_index.json`
-   * Tools > Board > Boards Manager > Install "esp8266" by "ESP8266 Community" version 2.7.4
- 1. Select board ESP8266 () > Wemos D1 R1.
- 1. Install following libraries using Arduino IDE Library Manager (Tools > Manage Libraries):
-   * ESP8266 Influxdb (3.7.0)
-   * ADS1115_WE (1.2.3)
-   * Adafruit_ADS1015 (by Adafruit, 1.1.2)
-   * MAX6675 (by Adafruit, 1.1.0)
- 1. Create `client/haddockSettings.cpp` based on `client/haddockSettings.cpp.sample`
- 1. Open the client directory in the Arduino IDE and upload it to your Wemos D1 board.
+ 1. Install [PlatformIO CLI](https://docs.platformio.org/en/latest//core/installation.html).
+ 1. Make sure command `pio` is executable.
+ 1. Create `client/src/haddockSettings.cpp` based on `client/src/haddockSettings.cpp.sample`
+ 1. `make build` compiles the code.
+ 1. Connect your sensor with USB and upload the code by executing `make upload`
+ 1. You can monitor the serial output with `make monitor`
  1. Follow the serial output to see the Mac address of the board.
- 1. Add the sensor definition for this particular board.
- 1. Repeat the sensor confiruration step for each board.
+ 1. Add the sensor definition for this particular board to `client/src/haddockSettings.cpp`.
+ 1. Repeat the sensor configuration step for each board.
 
 ## Updating code OTA using httpd
 
@@ -68,11 +62,11 @@ and installed to the ESP8266 sensor.
 To update client code:
  1. Increase the `OTA_VERSION` value (defined in `haddockSettings.cpp`) by one.
     This will be the version code of your new updated binary.
- 1. Compile a new binary with the Arduino IDE: Sketch > Export compiled Binary.
+ 1. Compile a new binary: `cd client && make build`
  1. Copy binary to `server/ota-files/haddock-XXX.bin` where the XXX is your new version
     number. For example:
 
-    `cp client/haddock.ino.d1.bin server/ota-files/haddock-2.bin`
+    `cp client/.pio/build/wemosd1r1/firmware.bin server/ota-files/haddock-2.bin`
 
  1. To start the upgrade of all sensors you need to copy the content of
     `ota-files/` to httpd container:
