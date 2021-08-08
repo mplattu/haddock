@@ -1,0 +1,13 @@
+# This is the InfluxDB token with a read access to the bucket "haddock"
+INFLUXDB_TOKEN_READ=
+# This is the InfluxDB token with a write access to the bucket "haddock"
+INFLUXDB_TOKEN_WRITE=
+# This is the local IP of your InfluxDB/NTP server i.e. the machine you're running the Docker instances
+SERVER_IP=
+# Your WIFI settings for the sensors
+SENSOR_WIFI_NAME=
+SENSOR_WIFI_PASSWORD=
+# Do not change these unless you know what you're doing
+INFLUXDB_URL_DOCKER = http://haddock_influxdb:8086
+INFLUXDB_ORG = Haddock
+INFLUXDB_BUCKET = haddock

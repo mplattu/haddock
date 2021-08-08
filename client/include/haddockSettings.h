@@ -1,1 +1,1 @@
-void haddockSettings();
+void haddockSettingsSensors();

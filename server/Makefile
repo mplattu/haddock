@@ -64,7 +64,7 @@ clean: clean-ntp clean-influxdb clean-httpd clean-network
 99-haddock-params.conf: ../settings.mk
 	echo 'server.modules += ( "mod_setenv" )' >99-haddock-params.conf
 	echo 'setenv.add-environment = ( "INFLUXDB_TOKEN_READ" => "$(INFLUXDB_TOKEN_READ)",' >>99-haddock-params.conf
-	echo '"INFLUXDB_URL" => "$(INFLUXDB_URL)",' >>99-haddock-params.conf
+	echo '"INFLUXDB_URL" => "$(INFLUXDB_URL_DOCKER)",' >>99-haddock-params.conf
 	echo '"INFLUXDB_ORG" => "$(INFLUXDB_ORG)",' >>99-haddock-params.conf
 	echo '"INFLUXDB_BUCKET" => "$(INFLUXDB_BUCKET)" )' >>99-haddock-params.conf
 

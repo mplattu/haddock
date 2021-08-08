@@ -35,17 +35,23 @@ The system runs on a Linux laptop which is used also for the navigation.
    * Initial Bucket Name: `haddock`
    * Click "Continue"
    * Click "Configure Later"
- 1. Add a token for your sensors:
-   * "Data" (left navi) > "Tokens" (tab) > "Generate" (button) > "Read/Write Token"
-   * Give a description (e.g. "sensors") and create a scoped write token for bucket "haddock" > "Save"
-   * Click the token description and copy the token string to your `haddockSettings.cpp` for the
-     `INFLUXDB_TOKEN` value (see below).
+ 1. Create InfluxDB tokens and `settings.mk`:
+   * Copy `settings.mk.sample` to your local `settings.mk`
+   * Create InfluxDB token: "Data" (left navi) > "Tokens" (tab) > "Generate" (button) > "Read/Write Token"
+   * Give a description (e.g. "sensors") and create a scoped **write token** for bucket "haddock" > "Save".
+     This will be your `INFLUXDB_TOKEN_WRITE`.
+   * Create another token (e.g. "webclient") with **read access** for bucket "haddock" which is your
+     `INFLUXDB_TOKEN_READ`.
+   * Click the token description text and copy the token strings to `settings.mk`
+ 1. Edit rest of the `settings.mk`:
+   * Set `SERVER_IP` which will be used to contact your InfluxDB, NTP and httpd servers (the last for the OTA updates)
+   * Set `SENSOR_WIFI_NAME` and `SENSOR_WIFI_PASSWORD` to tell your sensors how to join your WiFi   network
 
 ## Compiling Sensor Code
 
  1. Install [PlatformIO CLI](https://docs.platformio.org/en/latest//core/installation.html).
  1. Make sure command `pio` is executable.
- 1. Create `client/src/haddockSettings.cpp` based on `client/src/haddockSettings.cpp.sample`
+ 1. Create `client/src/haddockSettings.cpp` based on `client/src/haddockSettings.cpp.sample`. This is where you define the role and parameters for your sensors.
  1. `make build` compiles the code.
  1. Connect your sensor with USB and upload the code by executing `make upload`
  1. You can monitor the serial output with `make monitor`
@@ -77,7 +83,7 @@ To update client code:
 
 Make sure you update the `OTA_VERSION` always by one as the Haddock sensor expects
 to find the next update from the version code from a following URL:
-`http://[OTA_SERVER]:80/ota-files/haddock-[OTA_VERSION+1].bin`. It is a good practice
+`http://[SERVER_IP]:80/ota-files/haddock-[OTA_VERSION+1].bin`. It is a good practice
 to keep all your upgraded binaries to give outdated sensors a full upgrade path.
 
 ## Milou - A Simple Web Client
