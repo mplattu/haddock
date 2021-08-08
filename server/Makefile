@@ -55,6 +55,20 @@ clean-httpd:
 	-docker rm haddock_httpd
 	-docker rmi haddock_httpd:latest
 
+create-dev-signalk:
+	docker build -t haddock_signalk:latest -f Dockerfile.signalk .
+	docker create --name haddock_signalk  \
+	  --net haddock_net                   \
+		--publish 3000:3000                 \
+		haddock_signalk:latest
+
+create-prod-signalk: create-dev-signalk
+	docker update --restart always haddock_signalk
+
+clean-signalk:
+	-docker rm haddock_signalk
+	-docker rmi haddock_signalk:latest
+
 create-prod: create-network create-prod-ntp create-prod-influxdb create-prod-httpd
 
 create-dev: create-network create-dev-ntp create-dev-influxdb create-dev-httpd
@@ -79,8 +93,10 @@ update-ota:
 start: start-httpd
 	docker start haddock_ntp
 	docker start haddock_influxdb
+	docker start haddock_signalk
 
 stop:
 	docker stop haddock_ntp
 	docker stop haddock_influxdb
 	docker stop haddock_httpd
+	docker stop haddock_signalk
