@@ -6,20 +6,25 @@ shows them in a table.
 
 ## Configuring, Compiling and Installing
 
-Before compiling:
+Before compiling make sure you have edited your `settings.mk` as explained in the
+general README.
 
-1. Create a read-enabled token for your InfluxDB (Data > Tokens > Generate).
-1. Execute in the top level `INFLUXDB_TOKEN_WRITE=your_sensor_token_you_created_earlier
-  INFLUXDB_TOKEN_READ=your_read_token_you_just_created make configure` which updates
-  the `settings.mk`
 1. Install the new secrets to your running webserver:
   ```
   cd server
   make stop
   make start
   ```
-1. Update `SENSORS` to point to the sensors which you want to show on the
-Web page.
+1. Update value `SENSORS` in `webclient/src/milou/milou.go` to point to the sensors
+which you want to show on the Web page. You'll find the relevant values from the
+`client/src/haddockSettings.cpp`. Example:
+
+  ```
+  var SENSORS = []valuereader.Sensor{
+    {"Battery1_Voltage", "voltage", ""},
+    {"Vattery1_Current", "current", ""},
+  }
+  ```
 
 1. By default the web server runs in a containerised Linux. Thus, it is enough to
 build a Linux version of the Milou.

@@ -15,16 +15,14 @@ extern char* WIFI_PASSWORD;
 
 extern int WAIT_BETWEEN_MEASUREMENTS;
 
+extern char* INFLUXDB_URL_PUBLIC;
+
 extern char* NTP_TIMEZONE;
 extern char* NTP_SERVER;
 
 extern char* OTA_SERVER;
 extern int OTA_VERSION;
 
-extern char* INFLUXDB_URL;
-extern char* INFLUXDB_TOKEN;
-extern char* INFLUXDB_ORG;
-extern char* INFLUXDB_BUCKET;
 extern char* INFLUXDB_VAR;
 
 #endif

@@ -23,9 +23,9 @@ def get_random_sensor_value():
 
 def main():
     try:
-        INFLUXDB_URL = os.environ["INFLUXDB_URL"]
+        INFLUXDB_URL = "http://"+os.environ["SERVER_IP"]+":8086"
     except KeyError:
-        exit_with_error("Please set INFLUXDB_URL environment variable")
+        exit_with_error("Please set SERVER_IP environment variable")
 
     try:
         INFLUXDB_ORG = os.environ["INFLUXDB_ORG"]

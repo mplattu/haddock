@@ -15,16 +15,14 @@ char* WIFI_PASSWORD;
 
 int WAIT_BETWEEN_MEASUREMENTS;
 
+char* INFLUXDB_URL_PUBLIC;
+
 char* NTP_TIMEZONE;
 char* NTP_SERVER;
 
 char* OTA_SERVER;
 int OTA_VERSION;
 
-char* INFLUXDB_URL;
-char* INFLUXDB_TOKEN;
-char* INFLUXDB_ORG;
-char* INFLUXDB_BUCKET;
 char* INFLUXDB_VAR;
 
 #include "haddock.h"
@@ -46,6 +44,27 @@ ESP8266WiFiMulti WiFiMulti;
 // It will be used as a key to the settings (see haddockSettings.cpp)
 String thisSensorMac;
 
+void haddockSettingsGeneral() {
+  WIFI_NAME = SENSOR_WIFI_NAME;
+  WIFI_PASSWORD = SENSOR_WIFI_PASSWORD;
+
+  WAIT_BETWEEN_MEASUREMENTS = 1000;
+
+  int bufferSize = strlen("http://")+strlen(SERVER_IP)+strlen(":8086")+1;
+  INFLUXDB_URL_PUBLIC = new char[bufferSize];
+  strcpy(INFLUXDB_URL_PUBLIC, "http://");
+  strcat(INFLUXDB_URL_PUBLIC, SERVER_IP);
+  strcat(INFLUXDB_URL_PUBLIC, ":8086");
+
+  // Your timezone (https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html)
+  NTP_TIMEZONE = "UTC+2";
+  // Your NTP server URL (this is where you run your server)
+  NTP_SERVER = SERVER_IP;
+
+  // Your OTA server IP
+  OTA_SERVER = SERVER_IP;
+}
+
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
 
@@ -62,10 +81,12 @@ void setup() {
     delay(1000);
   }
 
-  haddockSettings();
+  haddockSettingsGeneral();
+  haddockSettingsSensors();
 
 #ifdef WIFI
-  influxDbClient.setConnectionParams(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
+  Serial.printf("INFLUXDB_TOKEN_WRITE: %s\n", INFLUXDB_TOKEN_WRITE);
+  influxDbClient.setConnectionParams(INFLUXDB_URL_PUBLIC, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN_WRITE);
 #endif
 
   // Find configuration for this particular device
@@ -155,8 +176,9 @@ void loop() {
     }
 
     // Do we have an OTA update?
+    WiFiClient client;
     char* otaPath = getOTAPath(OTA_VERSION+1);
-    ESPhttpUpdate.update(OTA_SERVER, 80, otaPath);
+    ESPhttpUpdate.update(client, OTA_SERVER, 80, otaPath);
 #endif
 
     digitalWrite(LED_BUILTIN, HIGH);
