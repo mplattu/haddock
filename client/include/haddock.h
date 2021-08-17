@@ -12,6 +12,7 @@ const int SensorTypeRandom = 99;
 
 extern char* WIFI_NAME;
 extern char* WIFI_PASSWORD;
+extern char* SIGNALK_SERVER_URI;
 
 extern int WAIT_BETWEEN_MEASUREMENTS;
 

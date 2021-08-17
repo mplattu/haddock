@@ -12,10 +12,10 @@
 Sensor sensors;
 char* WIFI_NAME;
 char* WIFI_PASSWORD;
+char* SIGNALK_SERVER_URI;
 
 int WAIT_BETWEEN_MEASUREMENTS;
 
-char* INFLUXDB_URL_PUBLIC;
 
 char* NTP_TIMEZONE;
 char* NTP_SERVER;
@@ -23,16 +23,14 @@ char* NTP_SERVER;
 char* OTA_SERVER;
 int OTA_VERSION;
 
-char* INFLUXDB_VAR;
-
 #include "haddock.h"
 #include "haddockSettings.h"
+#include "haddockSignalK.h"
 
 // Always include wifi library as we need the mac address of the device to get its settings
 #include <ESP8266WiFiMulti.h>
 
-#include <InfluxDbClient.h>
-InfluxDBClient influxDbClient;
+HaddockSignalK sensorKClient;
 ESP8266WiFiMulti WiFiMulti;
 
 #ifdef WIFI
@@ -47,14 +45,9 @@ String thisSensorMac;
 void haddockSettingsGeneral() {
   WIFI_NAME = SENSOR_WIFI_NAME;
   WIFI_PASSWORD = SENSOR_WIFI_PASSWORD;
+  SIGNALK_SERVER_URI = SIGNALK_URI;
 
   WAIT_BETWEEN_MEASUREMENTS = 1000;
-
-  int bufferSize = strlen("http://")+strlen(SERVER_IP)+strlen(":8086")+1;
-  INFLUXDB_URL_PUBLIC = new char[bufferSize];
-  strcpy(INFLUXDB_URL_PUBLIC, "http://");
-  strcat(INFLUXDB_URL_PUBLIC, SERVER_IP);
-  strcat(INFLUXDB_URL_PUBLIC, ":8086");
 
   // Your timezone (https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html)
   NTP_TIMEZONE = "UTC+2";
@@ -83,11 +76,6 @@ void setup() {
 
   haddockSettingsGeneral();
   haddockSettingsSensors();
-
-#ifdef WIFI
-  Serial.printf("INFLUXDB_TOKEN_WRITE: %s\n", INFLUXDB_TOKEN_WRITE);
-  influxDbClient.setConnectionParams(INFLUXDB_URL_PUBLIC, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN_WRITE);
-#endif
 
   // Find configuration for this particular device
   thisSensorMac = WiFi.macAddress();
@@ -124,13 +112,8 @@ void setup() {
 
   configTzTime(NTP_TIMEZONE, NTP_SERVER);
 
-  if (influxDbClient.validateConnection()) {
-    Serial.print("Connected to InfluxDB: ");
-    Serial.println(influxDbClient.getServerUrl());
-  } else {
-    Serial.print("InfluxDB connection failed: ");
-    Serial.println(influxDbClient.getLastErrorMessage());
-  }
+  sensorKClient.initialise(SIGNALK_SERVER_URI, sensorSettings.sensorName);
+  //sensorKClient.resetNvm();
 #endif
 
   // Initialise sensor using sensor settings
@@ -156,7 +139,7 @@ void loop() {
 
     digitalWrite(LED_BUILTIN, LOW);
 
-    // Get InfluxDB sensor & variable name for this sensor
+    // Get sensor & variable name for this sensor
     char* sensorName = sensors.getSensorName(thisSensorMac);
     char* variableName = sensors.getSensorVariableName(thisSensorMac);
 
@@ -166,13 +149,16 @@ void loop() {
     Serial.printf("%s: %s = %f\n", sensorName, variableName, measurement);
 
 #ifdef WIFI
-    // Report measured value to InfluxDB
-    Point pointDevice(sensorName);
-    pointDevice.addField(variableName, measurement);
-    pointDevice.addField("version", OTA_VERSION);
-    if (! influxDbClient.writePoint(pointDevice)) {
-      Serial.print("InfluxDB write failed: ");
-      Serial.println(influxDbClient.getLastErrorMessage());
+    // Report measured value to SignalK server
+    bool success = sensorKClient.sendValue(sensorName, variableName, measurement);
+    if (!success) {
+      int n;
+      for (n=0; n<50; n++) {
+        digitalWrite(LED_BUILTIN, LOW);
+        delay(50);
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(50);
+      }
     }
 
     // Do we have an OTA update?
